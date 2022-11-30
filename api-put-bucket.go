@@ -65,15 +65,16 @@ func (c *Client) doMakeBucket(ctx context.Context, bucketName string, location s
 		bucketLocation: location,
 	}
 
+	headers := make(http.Header)
 	if objectLockEnabled {
-		headers := make(http.Header)
 		headers.Add("x-amz-bucket-object-lock-enabled", "true")
-		reqMetadata.customHeader = headers
 	}
 
 	if panfsPath != "" {
-		headers := make(http.Header)
 		headers.Add("x-panfs-bucket-path", panfsPath)
+	}
+
+	if len(headers) != 0 {
 		reqMetadata.customHeader = headers
 	}
 
