@@ -33,16 +33,16 @@ func (c *Client) makeBucket(ctx context.Context, bucketName string, opts MakeBuc
 		return err
 	}
 
-	err = c.doMakeBucket(ctx, bucketName, opts.Region, opts.PanfsPath, opts.ObjectLocking)
+	err = c.doMakeBucket(ctx, bucketName, opts.Region, opts.PanFSPath, opts.ObjectLocking)
 	if err != nil && (opts.Region == "" || opts.Region == "us-east-1") {
 		if resp, ok := err.(ErrorResponse); ok && resp.Code == "AuthorizationHeaderMalformed" && resp.Region != "" {
-			err = c.doMakeBucket(ctx, bucketName, resp.Region, opts.PanfsPath, opts.ObjectLocking)
+			err = c.doMakeBucket(ctx, bucketName, resp.Region, opts.PanFSPath, opts.ObjectLocking)
 		}
 	}
 	return err
 }
 
-func (c *Client) doMakeBucket(ctx context.Context, bucketName string, location string, panfsPath string, objectLockEnabled bool) (err error) {
+func (c *Client) doMakeBucket(ctx context.Context, bucketName string, location string, panFSPath string, objectLockEnabled bool) (err error) {
 	defer func() {
 		// Save the location into cache on a successful makeBucket response.
 		if err == nil {
@@ -70,8 +70,8 @@ func (c *Client) doMakeBucket(ctx context.Context, bucketName string, location s
 		headers.Add("x-amz-bucket-object-lock-enabled", "true")
 	}
 
-	if panfsPath != "" {
-		headers.Add("x-panfs-bucket-path", panfsPath)
+	if panFSPath != "" {
+		headers.Add("x-panfs-bucket-path", panFSPath)
 	}
 
 	if len(headers) != 0 {
@@ -114,7 +114,7 @@ func (c *Client) doMakeBucket(ctx context.Context, bucketName string, location s
 type MakeBucketOptions struct {
 	// Bucket location
 	Region    string
-	PanfsPath string
+	PanFSPath string
 	// Enable object locking
 	ObjectLocking bool
 }
